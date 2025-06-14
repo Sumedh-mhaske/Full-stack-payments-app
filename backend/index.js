@@ -8,9 +8,7 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-app.get("/signup", (req, res) => {});
-
-app.post("/signin", async (req, res) => {
+function authMiddleware(req, res, next) {
   const usersInfo = req.body;
   const parsedUsersInfo = usersSchema.safeParse(usersInfo);
 
@@ -19,7 +17,21 @@ app.post("/signin", async (req, res) => {
       msg: "You sent the wrong input",
     });
     return;
+  } else {
+    next();
   }
+}
+
+app.get("/signup", async (req, res) => {
+  const data = await Users.findOne(req.body);
+
+  res.json({
+    data,
+  });
+});
+
+app.post("/signin", authMiddleware, async (req, res) => {
+  const usersInfo = req.body;
 
   await Users.create({
     firstName: usersInfo.firstName,
@@ -28,10 +40,10 @@ app.post("/signin", async (req, res) => {
   });
 
   res.json({
-    msg: "Users added successfully",
+    msg: "User added successfully",
   });
 });
 
-app.put("/update_info", (req, res) => {});
+app.put("/update_info", authMiddleware, async (req, res) => {});
 
 app.listen(port, () => console.log(`App is running on port ${port}`));
