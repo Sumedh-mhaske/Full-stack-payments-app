@@ -6,4 +6,8 @@ const usersSchema = zod.object({
   password: zod.string().min(8),
 });
 
-module.exports = { usersSchema: usersSchema };
+const updateSchema = zod.object({
+  _id: zod.string(),
+});
+
+module.exports = { usersSchema, updateSchema };

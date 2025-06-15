@@ -1,10 +1,12 @@
 const express = require("express");
+const mainRouter = require("./routes/index");
 const app = express();
 const { Users } = require("./db");
-const { usersSchema } = require("./auth");
+const { usersSchema, updateSchema } = require("./auth");
 const cors = require("cors");
 const port = 3000;
 
+app.use("/api/v1", mainRouter);
 app.use(express.json());
 app.use(cors());
 
@@ -44,6 +46,6 @@ app.post("/signin", authMiddleware, async (req, res) => {
   });
 });
 
-app.put("/update_info", authMiddleware, async (req, res) => {});
+app.put("/update_info", async (req, res) => {});
 
 app.listen(port, () => console.log(`App is running on port ${port}`));
