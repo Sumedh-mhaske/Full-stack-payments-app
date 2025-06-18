@@ -7,8 +7,15 @@ const usersSchema = zod.object({
   password: zod.string().min(8),
 });
 
-const updateSchema = zod.object({
-  _id: zod.string(),
+const signupSchema = zod.object({
+  username: zod.string().email(),
+  password: zod.string().min(8),
 });
 
-module.exports = { usersSchema, updateSchema };
+const updateSchema = zod.object({
+  username: zod.string().optional(),
+  firstName: zod.string().optional(),
+  lastName: zod.string().optional(),
+});
+
+module.exports = { usersSchema, updateSchema, signupSchema };
