@@ -1,5 +1,5 @@
 const express = require("express");
-const { usersSchema, signupSchema, updateSchema } = require("../auth");
+const { usersSchema, signinSchema, updateSchema } = require("../auth");
 const jwt = require("jsonwebtoken");
 const { Users } = require("../db");
 const JWT_SECRET = require("../config");
@@ -43,7 +43,7 @@ router.post("/signup", async (req, res) => {
 
 router.post("/signin", async (req, res) => {
   const usersInfo = req.body;
-  const parsedUsersInfo = signupSchema.safeParse(usersInfo);
+  const parsedUsersInfo = signinSchema.safeParse(usersInfo);
 
   if (!parsedUsersInfo.success) {
     return res.status(411).json({
@@ -90,6 +90,34 @@ router.put("/update", authMiddleware, async (req, res) => {
 
   res.json({
     msg: "Information updated successfully",
+  });
+});
+
+router.get("/bulk", async (req, res) => {
+  const { filter } = req.query || "";
+
+  const foundedUser = await Users.find({
+    $or: [
+      {
+        firstName: {
+          $regex: filter,
+        },
+      },
+      {
+        lastName: {
+          $regex: filter,
+        },
+      },
+    ],
+  });
+
+  res.json({
+    users: foundedUser.map((user) => ({
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      _id: user._id,
+    })),
   });
 });
 
