@@ -1,12 +1,12 @@
 const express = require("express");
 const { usersSchema, signinSchema, updateSchema } = require("../auth");
 const jwt = require("jsonwebtoken");
-const { Users } = require("../db");
+const { Users, Account } = require("../db");
 const JWT_SECRET = require("../config");
 const { authMiddleware } = require("../authMiddleware");
 const userRouter = express.Router();
 
-router.post("/signup", async (req, res) => {
+userRouter.post("/signup", async (req, res) => {
   const usersInfo = req.body;
   const parsedUsersInfo = usersSchema.safeParse(usersInfo);
 
@@ -28,6 +28,11 @@ router.post("/signup", async (req, res) => {
 
   const createdUser = await Users.create(usersInfo);
 
+  await Account.create({
+    userId,
+    balance: 1 + Math.random() * 10000,
+  });
+
   const token = jwt.sign(
     {
       userId: createdUser._id,
@@ -41,7 +46,7 @@ router.post("/signup", async (req, res) => {
   });
 });
 
-router.post("/signin", async (req, res) => {
+userRouter.post("/signin", async (req, res) => {
   const usersInfo = req.body;
   const parsedUsersInfo = signinSchema.safeParse(usersInfo);
 
@@ -71,7 +76,7 @@ router.post("/signin", async (req, res) => {
   });
 });
 
-router.put("/update", authMiddleware, async (req, res) => {
+userRouter.put("/update", authMiddleware, async (req, res) => {
   const usersInfo = req.body;
   const { success } = updateSchema.safeParse(usersInfo);
 
@@ -93,7 +98,7 @@ router.put("/update", authMiddleware, async (req, res) => {
   });
 });
 
-router.get("/bulk", async (req, res) => {
+userRouter.get("/bulk", async (req, res) => {
   const { filter } = req.query || "";
 
   const foundedUser = await Users.find({
