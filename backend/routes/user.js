@@ -3,7 +3,7 @@ const { usersSchema, signinSchema, updateSchema } = require("../auth");
 const jwt = require("jsonwebtoken");
 const { Users, Account } = require("../db");
 const JWT_SECRET = require("../config");
-const { authMiddleware } = require("../authMiddleware");
+const authMiddleware = require("../authMiddleware");
 const userRouter = express.Router();
 
 userRouter.post("/signup", async (req, res) => {
@@ -11,25 +11,25 @@ userRouter.post("/signup", async (req, res) => {
   const parsedUsersInfo = usersSchema.safeParse(usersInfo);
 
   if (!parsedUsersInfo.success) {
-    return res.json({
-      msg: "Email is already taken / incorrect inputs",
+    return res.status(400).json({
+      msg: "Incorrect inputs",
     });
   }
 
-  const existingUser = Users.findOne({
+  const existingUser = await Users.findOne({
     username: usersInfo.username,
   });
 
   if (existingUser) {
-    return res.json({
-      msg: "Email is already taken / incorrect inputs",
+    return res.status(409).json({
+      msg: "Email is already taken",
     });
   }
 
   const createdUser = await Users.create(usersInfo);
 
   await Account.create({
-    userId,
+    userId: createdUser._id,
     balance: 1 + Math.random() * 10000,
   });
 
@@ -40,7 +40,7 @@ userRouter.post("/signup", async (req, res) => {
     JWT_SECRET,
   );
 
-  res.json({
+  res.status(201).json({
     msg: "User created successfully",
     token: token,
   });
@@ -52,7 +52,7 @@ userRouter.post("/signin", async (req, res) => {
 
   if (!parsedUsersInfo.success) {
     return res.status(411).json({
-      msg: "Error while loging in",
+      msg: "Incorrect inputs",
     });
   }
 
@@ -60,7 +60,7 @@ userRouter.post("/signin", async (req, res) => {
 
   if (!userFound) {
     return res.status(411).json({
-      msg: "Error while loging in",
+      msg: "User not found",
     });
   }
 
