@@ -16,7 +16,7 @@ accountRouter.get("/balance", authMiddleware, async (req, res) => {
     userId,
   });
 
-  res.json(200).send({
+  res.status(200).json({
     balance: account.balance,
   });
 });
@@ -64,6 +64,7 @@ accountRouter.post("/transfer", authMiddleware, async (req, res) => {
 
   // Commiting the transaction
   await session.commitTransaction();
+  await session.endSession();
   res.json({
     message: "Transfer successful",
   });
