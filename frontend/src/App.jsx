@@ -1,18 +1,22 @@
-import { Balance } from "./components/Balance";
-import { InputField } from "./components/InputField";
-import { Navbar } from "./components/Navbar";
-import { UsersList } from "./components/UsersList";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Signup } from "./pages/Signup";
+import { Signin } from "./pages/Signin";
+import { Dashboard } from "./pages/Dashboard";
+import { SendMoney } from "./pages/SendMoney";
 
 function App() {
-  let counter = 0;
   return (
-    <div className="flex flex-col m-2 gap-6">
-      <Navbar />
-      <Balance balance={5000} />
-      <InputField />
-      <UsersList userNum={(counter += 1)} />
-      <UsersList userNum={(counter += 1)} />
-      <UsersList userNum={(counter += 1)} />
+    <div>
+      <>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/Signup" element={<Signup />} />
+            <Route path="/Signin" element={<Signin />} />
+            <Route path="/Dashboard" element={<Dashboard />} />
+            <Route path="/SendMoney" element={<SendMoney />} />
+          </Routes>
+        </BrowserRouter>
+      </>
     </div>
   );
 }
