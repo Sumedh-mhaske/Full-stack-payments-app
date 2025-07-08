@@ -4,17 +4,16 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export const Users = () => {
-  // Replace with backend call
   const [users, setUsers] = useState([]);
-  const [fileter, setFilter] = useState("");
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/v1/user/bulk?filter=" + fileter)
-      .then((response) => {
-        setUsers(response.data.user);
+      .get("http://localhost:3000/api/v1/user/bulk?filter=" + filter)
+      .then((res) => {
+        setUsers(res.data.user);
       });
-  }, [fileter]);
+  }, [filter]);
 
   return (
     <>
@@ -27,7 +26,7 @@ export const Users = () => {
           type="text"
           placeholder="Search users..."
           className="w-full px-2 py-1 border rounded border-slate-200"
-        ></input>
+        />
       </div>
       <div>
         {users.map((user) => (
@@ -49,14 +48,14 @@ function User({ user }) {
             {user.firstName[0]}
           </div>
         </div>
-        <div className="flex flex-col justify-center h-ful">
+        <div className="flex flex-col justify-center h-full">
           <div>
             {user.firstName} {user.lastName}
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col justify-center h-ful">
+      <div className="flex flex-col justify-center h-full">
         <Button
           onClick={(e) => {
             navigate("/send?id=" + user._id + "&name=" + user.firstName);
