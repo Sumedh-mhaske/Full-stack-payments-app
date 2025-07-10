@@ -28,12 +28,12 @@ export const SendMoney = () => {
               <div className="space-y-2">
                 <label
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  for="amount"
+                  htmlFor="amount"
                 >
                   Amount (in Rs)
                 </label>
                 <input
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => setAmount(+e.target.value)}
                   type="number"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   id="amount"
@@ -41,8 +41,8 @@ export const SendMoney = () => {
                 />
               </div>
               <button
-                onClick={() => {
-                  axios.post(
+                onClick={async () => {
+                  const res = await axios.post(
                     "http://localhost:3000/api/v1/account/transfer",
                     {
                       to: id,
@@ -56,7 +56,7 @@ export const SendMoney = () => {
                     },
                   );
                 }}
-                className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 text-white"
+                className="justify-center rounded-md text-sm font-medium ring-offset-background transition-colors h-10 px-4 py-2 w-full bg-green-500 hover:bg-green-600 active:bg-green-600 text-white cursor-pointer"
               >
                 Initiate Transfer
               </button>
